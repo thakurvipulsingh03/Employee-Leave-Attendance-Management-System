@@ -1,0 +1,831 @@
+{
+    "info":  {
+                 "_postman_id":  "6cba78c9-61d3-46f5-b9a7-8d38f47cc28f",
+                 "name":  "LeaveFlow API",
+                 "description":  "START HERE. The collection needs no environment selected. For the first account, fill adminName, adminEmail, adminPassword, then run Health, Bootstrap Status, Bootstrap First Admin only if setup_required=true, and Login as Admin. After setup, repeatable public Admin registration is available at the login screen and via Public Register Admin below. Each Admin gets a separate workspace and cannot access other Admin workspaces. Public registration grants full Admin access within that workspace; use only for this local demo.",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "auth":  {
+                 "type":  "bearer",
+                 "bearer":  [
+                                {
+                                    "key":  "token",
+                                    "value":  "{{accessToken}}",
+                                    "type":  "string"
+                                }
+                            ]
+             },
+    "variable":  [
+                     {
+                         "key":  "baseUrl",
+                         "value":  "http://127.0.0.1:8000"
+                     },
+                     {
+                         "key":  "accessToken",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "adminEmail",
+                         "value":  "",
+                         "description":  "Your chosen initial Admin email; use this exact value for Admin login."
+                     },
+                     {
+                         "key":  "adminPassword",
+                         "value":  "",
+                         "description":  "Your chosen initial Admin password (at least 8 characters); use this exact value for Admin login."
+                     },
+                     {
+                         "key":  "adminName",
+                         "value":  "",
+                         "description":  "Your chosen initial Admin display name."
+                     },
+                     {
+                         "key":  "setupKey",
+                         "value":  "",
+                         "description":  "Only needed if backend LEAVEFLOW_BOOTSTRAP_KEY is configured."
+                     },
+                     {
+                         "key":  "hrEmail",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "hrPassword",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "managerEmail",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "managerPassword",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "employeeEmail",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "employeePassword",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "userId",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "targetUserId",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "employeeId",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "employeeCode",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "currentPassword",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "fullName",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "email",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "accountRole",
+                         "value":  "EMPLOYEE"
+                     },
+                     {
+                         "key":  "departmentId",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "managerId",
+                         "value":  "null"
+                     },
+                     {
+                         "key":  "designation",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "joiningDate",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "newPassword",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "departmentName",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "departmentDescription",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "leaveTypeName",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "leaveTypeDescription",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "yearlyAllowance",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "leaveTypeId",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "leaveRequestId",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "startDate",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "endDate",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "leaveReason",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "selectedDate",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "isActive",
+                         "value":  "false"
+                     }
+                 ],
+    "item":  [
+                 {
+                     "name":  "START HERE - Setup \u0026 Sign In (run first)",
+                     "item":  [
+                                  {
+                                      "name":  "1. Health - confirm the API is running",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/api/health",
+                                                      "description":  "Run first. Expect HTTP 200 and status healthy. If it fails, start the backend from the backend folder: python -m uvicorn main:app --reload."
+                                                  },
+                                      "auth":  {
+                                                   "type":  "noauth"
+                                               }
+                                  },
+                                  {
+                                      "name":  "2. Bootstrap Status - check whether first Admin setup is needed",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/auth/bootstrap-status",
+                                                      "description":  "Read setup_required in the response. If true, run Bootstrap First Admin. If false, skip bootstrap and go to Login as Admin."
+                                                  },
+                                      "auth":  {
+                                                   "type":  "noauth"
+                                               }
+                                  },
+                                  {
+                                      "name":  "3. Bootstrap First Admin - only if setup_required is true",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Initial Admin created\u0027, function () { pm.response.to.have.status(201); });"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"full_name\": \"{{adminName}}\",\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\",\n  \"setup_key\": \"{{setupKey}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/bootstrap",
+                                                      "description":  "Fill adminName, adminEmail, and adminPassword in this collection Variables tab first. Run only when Bootstrap Status returns setup_required=true. This works once per database; do not rerun after setup. If setupKey is configured by the backend, enter it in the collection Variables tab."
+                                                  },
+                                      "auth":  {
+                                                   "type":  "noauth"
+                                               }
+                                  },
+                                  {
+                                      "name":  "4. Login as Admin - use the same credentials as Bootstrap",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Login succeeded\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const data = pm.response.json();",
+                                                                                    "if (data.access_token) pm.collectionVariables.set(\u0027accessToken\u0027, data.access_token);",
+                                                                                    "if (data.user) { pm.collectionVariables.set(\u0027userId\u0027, String(data.user.id)); pm.collectionVariables.set(\u0027fullName\u0027, data.user.full_name || \u0027\u0027); }",
+                                                                                    "pm.collectionVariables.set(\u0027currentPassword\u0027, pm.collectionVariables.get(\u0027adminPassword\u0027) || \u0027\u0027);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/login",
+                                                      "description":  "Run after Admin setup. The email and password must exactly match the values used in Bootstrap First Admin. A 401 means those credentials do not match an account in the database."
+                                                  },
+                                      "auth":  {
+                                                   "type":  "noauth"
+                                               }
+                                  },
+                                  {
+                                      "name":  "Login as HR - only after an HR account exists",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Login succeeded\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const data = pm.response.json();",
+                                                                                    "if (data.access_token) pm.collectionVariables.set(\u0027accessToken\u0027, data.access_token);",
+                                                                                    "if (data.user) { pm.collectionVariables.set(\u0027userId\u0027, String(data.user.id)); pm.collectionVariables.set(\u0027fullName\u0027, data.user.full_name || \u0027\u0027); }",
+                                                                                    "pm.collectionVariables.set(\u0027currentPassword\u0027, pm.collectionVariables.get(\u0027hrPassword\u0027) || \u0027\u0027);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"email\": \"{{hrEmail}}\",\n  \"password\": \"{{hrPassword}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/login",
+                                                      "description":  "Run only after an Admin has created an HR account. Create Account saves this account email and password for you."
+                                                  },
+                                      "auth":  {
+                                                   "type":  "noauth"
+                                               }
+                                  },
+                                  {
+                                      "name":  "Login as Manager - only after a Manager account exists",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Login succeeded\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const data = pm.response.json();",
+                                                                                    "if (data.access_token) pm.collectionVariables.set(\u0027accessToken\u0027, data.access_token);",
+                                                                                    "if (data.user) { pm.collectionVariables.set(\u0027userId\u0027, String(data.user.id)); pm.collectionVariables.set(\u0027fullName\u0027, data.user.full_name || \u0027\u0027); }",
+                                                                                    "pm.collectionVariables.set(\u0027currentPassword\u0027, pm.collectionVariables.get(\u0027managerPassword\u0027) || \u0027\u0027);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"email\": \"{{managerEmail}}\",\n  \"password\": \"{{managerPassword}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/login",
+                                                      "description":  "Run only after an Admin has created a Manager account. Create Account saves this account email and password for you."
+                                                  },
+                                      "auth":  {
+                                                   "type":  "noauth"
+                                               }
+                                  },
+                                  {
+                                      "name":  "Login as Employee - only after an Employee account exists",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Login succeeded\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const data = pm.response.json();",
+                                                                                    "if (data.access_token) pm.collectionVariables.set(\u0027accessToken\u0027, data.access_token);",
+                                                                                    "if (data.user) { pm.collectionVariables.set(\u0027userId\u0027, String(data.user.id)); pm.collectionVariables.set(\u0027fullName\u0027, data.user.full_name || \u0027\u0027); }",
+                                                                                    "pm.collectionVariables.set(\u0027currentPassword\u0027, pm.collectionVariables.get(\u0027employeePassword\u0027) || \u0027\u0027);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"email\": \"{{employeeEmail}}\",\n  \"password\": \"{{employeePassword}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/login",
+                                                      "description":  "Run only after HR, an Admin, or an authorized Manager has created an Employee account. Create Account saves this account email and password for you."
+                                                  },
+                                      "auth":  {
+                                                   "type":  "noauth"
+                                               }
+                                  },
+                                  {
+                                      "name":  "Current User",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/auth/me"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update My Profile",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"full_name\": \"{{fullName}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/me"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Change My Password",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"current_password\": \"{{currentPassword}}\",\n  \"new_password\": \"{{newPassword}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/change-password"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Dashboard Summary",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/dashboard/summary"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Public Register Admin (repeatable; full access)",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Admin account registered\u0027, function () { pm.response.to.have.status(201); });",
+                                                                                    "pm.collectionVariables.set(\u0027adminName\u0027, pm.collectionVariables.get(\u0027fullName\u0027) || \u0027\u0027);",
+                                                                                    "pm.collectionVariables.set(\u0027adminEmail\u0027, pm.collectionVariables.get(\u0027email\u0027) || \u0027\u0027);",
+                                                                                    "pm.collectionVariables.set(\u0027adminPassword\u0027, pm.collectionVariables.get(\u0027newPassword\u0027) || \u0027\u0027);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"full_name\": \"{{fullName}}\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{newPassword}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/register-admin",
+                                                      "description":  "Public and repeatable. Set fullName, email, and newPassword in collection Variables. Each registered account is an Admin with full access to a separate workspace; intended only for the local demo. The credentials are saved to adminEmail/adminPassword for the Admin login request."
+                                                  },
+                                      "auth":  {
+                                                   "type":  "noauth"
+                                               }
+                                  }
+                              ],
+                     "description":  "Follow the numbered requests in order. After Admin login, create a department and leave type in the next folder before creating accounts."
+                 },
+                 {
+                     "name":  "Accounts, Departments \u0026 Leave Types",
+                     "item":  [
+                                  {
+                                      "name":  "List Employees (Admin/HR; Manager sees own team)",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/employees"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "List All User Accounts (Admin)",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/admin/users"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Activate or Deactivate User (Admin)",
+                                      "request":  {
+                                                      "method":  "PATCH",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"is_active\": {{isActive}}\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/admin/users/{{targetUserId}}/status",
+                                                      "description":  "Admin only. Set targetUserId to an account ID and isActive to true or false in collection Variables."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Assign or Clear Employee Manager (Admin/HR)",
+                                      "request":  {
+                                                      "method":  "PATCH",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"manager_id\": {{managerId}}\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/employees/{{employeeId}}/manager",
+                                                      "description":  "Admin or HR only. Set employeeId and managerId; use null to clear the assigned Manager."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Create Admin, HR, Manager, or Employee (role permissions apply)",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "prerequest",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "if (!pm.collectionVariables.get(\u0027joiningDate\u0027)) { const now = new Date(); const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10); pm.collectionVariables.set(\u0027joiningDate\u0027, localDate); }"
+                                                                                ]
+                                                                   }
+                                                    },
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Account created\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const data = pm.response.json();",
+                                                                                    "const role = (pm.collectionVariables.get(\u0027accountRole\u0027) || \u0027EMPLOYEE\u0027).toUpperCase();",
+                                                                                    "if (data.employee_id) pm.collectionVariables.set(\u0027employeeId\u0027, String(data.employee_id));",
+                                                                                    "if (data.employee_code) pm.collectionVariables.set(\u0027employeeCode\u0027, data.employee_code);",
+                                                                                    "if (data.user_id) pm.collectionVariables.set(\u0027targetUserId\u0027, String(data.user_id));",
+                                                                                    "if (role === \u0027MANAGER\u0027) { pm.collectionVariables.set(\u0027managerId\u0027, String(data.employee_id)); pm.collectionVariables.set(\u0027managerEmail\u0027, pm.collectionVariables.get(\u0027email\u0027)); pm.collectionVariables.set(\u0027managerPassword\u0027, pm.collectionVariables.get(\u0027newPassword\u0027)); }",
+                                                                                    "if (role === \u0027HR\u0027) { pm.collectionVariables.set(\u0027hrEmail\u0027, pm.collectionVariables.get(\u0027email\u0027)); pm.collectionVariables.set(\u0027hrPassword\u0027, pm.collectionVariables.get(\u0027newPassword\u0027)); }",
+                                                                                    "if (role === \u0027EMPLOYEE\u0027) { pm.collectionVariables.set(\u0027employeeEmail\u0027, pm.collectionVariables.get(\u0027email\u0027)); pm.collectionVariables.set(\u0027employeePassword\u0027, pm.collectionVariables.get(\u0027newPassword\u0027)); }",
+                                                                                    "if (role === \u0027ADMIN\u0027) { pm.collectionVariables.set(\u0027adminName\u0027, pm.collectionVariables.get(\u0027fullName\u0027)); pm.collectionVariables.set(\u0027adminEmail\u0027, pm.collectionVariables.get(\u0027email\u0027)); pm.collectionVariables.set(\u0027adminPassword\u0027, pm.collectionVariables.get(\u0027newPassword\u0027)); }"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"full_name\": \"{{fullName}}\",\n  \"email\": \"{{email}}\",\n  \"role\": \"{{accountRole}}\",\n  \"department_id\": {{departmentId}},\n  \"manager_id\": {{managerId}},\n  \"designation\": \"{{designation}}\",\n  \"joining_date\": \"{{joiningDate}}\",\n  \"password\": \"{{newPassword}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/employees",
+                                                      "description":  "A signed-in Admin can create ADMIN, HR, MANAGER, or EMPLOYEE accounts. HR and Managers can create EMPLOYEE accounts only. Set fullName, email, accountRole, designation, and newPassword in collection Variables. Create department and Manager first when needed. Generated employee code and IDs are saved automatically; Admin credentials are also saved for the Login as Admin request."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "List Departments",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/departments"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Create Department (Admin/HR)",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Department created\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const data = pm.response.json();",
+                                                                                    "if (data.id) pm.collectionVariables.set(\u0027departmentId\u0027, String(data.id));"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"name\": \"{{departmentName}}\",\n  \"description\": \"{{departmentDescription}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/departments",
+                                                      "description":  "Admin or HR only. Set departmentName and departmentDescription in collection Variables. Run once; the returned department ID is saved automatically."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Active Leave Types",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/leaves/types",
+                                                      "description":  "Lists only active leave types in the signed-in user\u0027s workspace."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "List All Leave Types",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/leave-types"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Create Leave Type (Admin/HR)",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Leave type created\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const data = pm.response.json();",
+                                                                                    "if (data.id) pm.collectionVariables.set(\u0027leaveTypeId\u0027, String(data.id));"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"name\": \"{{leaveTypeName}}\",\n  \"description\": \"{{leaveTypeDescription}}\",\n  \"yearly_allowance\": {{yearlyAllowance}}\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/leave-types",
+                                                      "description":  "Admin or HR only. Set leaveTypeName and yearlyAllowance in collection Variables. Create this before employee accounts to initialize their balances."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Company Leave Balances (Admin/HR)",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/leaves/balances"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Audit Logs (Admin)",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/admin/audit-logs?limit=100"
+                                                  }
+                                  }
+                              ],
+                     "description":  "Sign in as Admin first. Create a department and a leave type before creating accounts so new employees receive initial leave balances. The collection saves the department, Manager, employee, and leave-type IDs as requests succeed. Use one account creation request at a time."
+                 },
+                 {
+                     "name":  "Attendance",
+                     "item":  [
+                                  {
+                                      "name":  "My Attendance",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/attendance/me"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Today\u0027s Attendance Status",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/attendance/today-status"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Check In",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "url":  "{{baseUrl}}/attendance/check-in",
+                                                      "description":  "Changes the database. Run once per user per day; a repeat check-in returns an error."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Check Out",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "url":  "{{baseUrl}}/attendance/check-out",
+                                                      "description":  "Changes the database. Run after Check In on the same day."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Team / Company Attendance",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "prerequest",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "if (!pm.collectionVariables.get(\u0027selectedDate\u0027)) { const now = new Date(); const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10); pm.collectionVariables.set(\u0027selectedDate\u0027, localDate); }"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/attendance/team?date={{selectedDate}}",
+                                                      "description":  "Requires the appropriate Manager, HR, or Admin login. The date is filled automatically when blank."
+                                                  }
+                                  }
+                              ],
+                     "description":  "Login as the role whose attendance you want. Check In succeeds once per day; Check Out requires a successful Check In today. Team / Company Attendance is role-scoped."
+                 },
+                 {
+                     "name":  "Leave Requests",
+                     "item":  [
+                                  {
+                                      "name":  "My Leave Balances",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/leaves/balance/me"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "My Leave Requests",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/leaves/my-requests"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Apply for Leave",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "prerequest",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "const localDate = (date) =\u003e new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10);",
+                                                                                    "if (!pm.collectionVariables.get(\u0027startDate\u0027)) { const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1); pm.collectionVariables.set(\u0027startDate\u0027, localDate(tomorrow)); }",
+                                                                                    "if (!pm.collectionVariables.get(\u0027endDate\u0027)) pm.collectionVariables.set(\u0027endDate\u0027, pm.collectionVariables.get(\u0027startDate\u0027));",
+                                                                                    "if (!pm.collectionVariables.get(\u0027leaveReason\u0027)) pm.collectionVariables.set(\u0027leaveReason\u0027, \u0027Postman API validation request\u0027);"
+                                                                                ]
+                                                                   }
+                                                    },
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Leave request submitted\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const data = pm.response.json();",
+                                                                                    "if (data.request_id) pm.collectionVariables.set(\u0027leaveRequestId\u0027, String(data.request_id));"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"leave_type_id\": {{leaveTypeId}},\n  \"start_date\": \"{{startDate}}\",\n  \"end_date\": \"{{endDate}}\",\n  \"reason\": \"{{leaveReason}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/leaves/apply",
+                                                      "description":  "Employee login required. Create a leave type and employee balance first. The date is filled automatically if blank; adjust leaveTypeId if needed."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Pending Approvals (Manager/HR/Admin)",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/manager/leaves/pending",
+                                                      "description":  "Login as the assigned Manager, HR, or Admin first. Managers see only requests from their own team."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Team / Company Leave History",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "url":  "{{baseUrl}}/manager/leaves/history"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Approve Leave Request",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"comment\": \"Approved\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/manager/leaves/{{leaveRequestId}}/approve",
+                                                      "description":  "Requires an authorized Manager, HR, or Admin login and a pending leaveRequestId. Run only once per request."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Reject Leave Request",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"comment\": \"Please choose different dates\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/manager/leaves/{{leaveRequestId}}/reject",
+                                                      "description":  "Requires an authorized Manager, HR, or Admin login and a pending leaveRequestId. Run only once per request."
+                                                  }
+                                  }
+                              ],
+                     "description":  "Apply as Employee, then log in as the assigned Manager (or HR/Admin) to review. A successful application saves its request ID automatically. Approval/rejection changes database state and can be done only once per pending request."
+                 }
+             ]
+}
